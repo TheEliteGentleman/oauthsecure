@@ -1,0 +1,119 @@
+/**
+ * 
+ */
+package net.oauth.transport;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.oauth.transport.exception.TransportException;
+import net.oauth.transport.interceptor.RequestInterceptor;
+import net.oauth.transport.interceptor.ResponseInterceptor;
+
+import org.apache.log4j.Logger;
+
+/**
+ * @author Buhake Sindi
+ * @since 17 February 2012
+ *
+ */
+public abstract class AbstractTransport<REQ extends Request, RES extends Response> implements Transport<REQ, RES> {
+	
+	protected final Logger logger = Logger.getLogger(this.getClass());
+	private List<RequestInterceptor<REQ>> requestInterceptors;
+	private List<ResponseInterceptor<RES>> responseInterceptors;
+	
+	/**
+	 * 
+	 */
+	protected AbstractTransport() {
+		super();
+		// TODO Auto-generated constructor stub
+		requestInterceptors = new ArrayList<RequestInterceptor<REQ>>();
+		responseInterceptors = new ArrayList<ResponseInterceptor<RES>>();
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#addRequestInterceptor(net.oauth.transport.interceptor.RequestInterceptor)
+	 */
+	@Override
+	public void addRequestInterceptor(RequestInterceptor<REQ> interceptor) {
+		// TODO Auto-generated method stub
+		requestInterceptors.add(interceptor);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#addResponseInterceptor(net.oauth.transport.interceptor.ResponseInterceptor)
+	 */
+	@Override
+	public void addResponseInterceptor(ResponseInterceptor<RES> interceptor) {
+		// TODO Auto-generated method stub
+		responseInterceptors.add(interceptor);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#removeRequestInterceptor(net.oauth.transport.interceptor.RequestInterceptor)
+	 */
+	@Override
+	public void removeRequestInterceptor(RequestInterceptor<REQ> interceptor) {
+		// TODO Auto-generated method stub
+		requestInterceptors.remove(interceptor);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#removeResponseInterceptor(net.oauth.transport.interceptor.ResponseInterceptor)
+	 */
+	@Override
+	public void removeResponseInterceptor(ResponseInterceptor<RES> interceptor) {
+		// TODO Auto-generated method stub
+		responseInterceptors.remove(interceptor);
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#clearRequestInterceptors()
+	 */
+	@Override
+	public void clearRequestInterceptors() {
+		// TODO Auto-generated method stub
+		requestInterceptors.clear();
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#clearResponseInterceptor()
+	 */
+	@Override
+	public void clearResponseInterceptor() {
+		// TODO Auto-generated method stub
+		responseInterceptors.clear();
+	}
+
+	/* (non-Javadoc)
+	 * @see net.oauth.transport.Transport#send(net.oauth.transport.Request)
+	 */
+	@Override
+	public RES send(REQ request) throws TransportException {
+		// TODO Auto-generated method stub
+		if (request == null) {
+			throw new IllegalArgumentException("Transport request is required.");
+		}
+		
+		//Intercept request
+		for (RequestInterceptor<REQ> requestInterceptor : requestInterceptors) {
+			requestInterceptor.intercept(request);
+		}
+		
+		RES response = sendRequest(request);
+		if (response == null) {
+			throw new TransportException("No transport response received.");
+		}
+		
+		//Intercept response
+		for (ResponseInterceptor<RES> responseInterceptor : responseInterceptors) {
+			responseInterceptor.intercept(response);
+		}
+		
+		return response;
+	}
+
+	protected abstract RES sendRequest(REQ request) throws TransportException;
+}

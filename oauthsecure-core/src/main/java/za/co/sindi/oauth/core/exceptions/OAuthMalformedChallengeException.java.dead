@@ -1,0 +1,50 @@
+/**
+ * 
+ */
+package za.co.sindi.oauth.core.exceptions;
+
+/**
+ * @author Buhake Sindi
+ * @since 09 March 2012
+ *
+ */
+public class OAuthMalformedChallengeException extends OAuthAuthorizationException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7377526660606386828L;
+
+	/**
+	 * 
+	 */
+	public OAuthMalformedChallengeException() {
+		// TODO Auto-generated constructor stub
+		super();
+	}
+
+	/**
+	 * @param message
+	 */
+	public OAuthMalformedChallengeException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param cause
+	 */
+	public OAuthMalformedChallengeException(Throwable cause) {
+		super(cause);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public OAuthMalformedChallengeException(String message, Throwable cause) {
+		super(message, cause);
+		// TODO Auto-generated constructor stub
+	}
+}

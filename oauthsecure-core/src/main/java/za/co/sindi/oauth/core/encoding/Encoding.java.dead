@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package za.co.sindi.oauth.core.encoding;
+
+
+/**
+ * @author Buhake Sindi
+ * @since 03 February 2012
+ *
+ */
+public interface Encoding {
+
+	public String encode(String s);
+	public String decode(String s);
+}

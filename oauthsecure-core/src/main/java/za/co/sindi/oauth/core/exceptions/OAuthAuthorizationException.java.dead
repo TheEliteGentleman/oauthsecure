@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+package za.co.sindi.oauth.core.exceptions;
+
+
+/**
+ * @author Buhake Sindi
+ * @since 13 February 2012
+ *
+ */
+public class OAuthAuthorizationException extends OAuthException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6284230527244062155L;
+
+	/**
+	 * 
+	 */
+	public OAuthAuthorizationException() {
+		// TODO Auto-generated constructor stub
+		super();
+	}
+
+	/**
+	 * @param message
+	 */
+	public OAuthAuthorizationException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param cause
+	 */
+	public OAuthAuthorizationException(Throwable cause) {
+		super(cause);
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public OAuthAuthorizationException(String message, Throwable cause) {
+		super(message, cause);
+		// TODO Auto-generated constructor stub
+	}
+}
