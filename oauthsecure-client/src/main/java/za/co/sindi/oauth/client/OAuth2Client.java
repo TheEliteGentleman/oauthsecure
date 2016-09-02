@@ -3,10 +3,10 @@
  */
 package za.co.sindi.oauth.client;
 
-import za.co.sindi.oauth.client.request.oauth2.OAuth2AccesTokenRequest;
-import za.co.sindi.oauth.client.request.oauth2.OAuth2AuthorizationUrl;
-import za.co.sindi.oauth.client.request.oauth2.OAuth2ProtectedResourceRequest;
 import za.co.sindi.oauth.client.request.oauth2.enums.ResponseType;
+import za.co.sindi.oauth.client.request.oauth2.http.OAuth2AccesTokenRequest;
+import za.co.sindi.oauth.client.request.oauth2.http.OAuth2AuthorizationUrl;
+import za.co.sindi.oauth.client.request.oauth2.http.OAuth2ProtectedResourceRequest;
 import za.co.sindi.oauth.client.response.oauth2.AccessTokenResponseHandler;
 import za.co.sindi.oauth.core.http.HttpConstants;
 

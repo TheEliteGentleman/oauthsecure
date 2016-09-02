@@ -29,17 +29,17 @@ import za.co.sindi.oauth.client.transport.interceptor.InterceptorContext;
  * @since 15 February 2012
  *
  */
-public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorContext<Request> {
+public abstract class AbstractOAuthRequest<REQ extends Request, RES extends Response> implements OAuthRequest<REQ, RES>, InterceptorContext<REQ> {
 
 	protected final Logger logger = Logger.getLogger(this.getClass());
 	private String requestMethod;
 	private String requestUrl;
-	private TransportFactory<? extends Request, ? extends Response> transportFactory;
+	private TransportFactory<REQ, RES> transportFactory;
 	private ResponseHandler<?> responseHandler;
 	private String transportId;
 	
 	//Interceptor
-	private List<Interceptor<Request>> interceptors = new ArrayList<Interceptor<Request>>();
+	private List<Interceptor<REQ>> interceptors = new ArrayList<Interceptor<REQ>>();
 	
 	/**
 	 * @param requestMethod
@@ -75,7 +75,7 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 	 * @see net.oauth.transport.interceptor.InterceptorContext#addInterceptor(net.oauth.transport.Interceptor)
 	 */
 	@Override
-	public void addInterceptor(Interceptor<Request> interceptor) {
+	public void addInterceptor(Interceptor<REQ> interceptor) {
 		// TODO Auto-generated method stub
 		if (interceptor != null) {
 			interceptors.add(interceptor);
@@ -86,7 +86,7 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 	 * @see net.oauth.transport.interceptor.InterceptorContext#removeInterceptor(net.oauth.transport.Interceptor)
 	 */
 	@Override
-	public void removeInterceptor(Interceptor<Request> interceptor) {
+	public void removeInterceptor(Interceptor<REQ> interceptor) {
 		// TODO Auto-generated method stub
 		if (interceptor != null) {
 			interceptors.remove(interceptor);
@@ -137,14 +137,14 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 	/**
 	 * @return the transportFactory
 	 */
-	protected TransportFactory<? extends Request, ? extends Response> getTransportFactory() {
+	protected TransportFactory<REQ, RES> getTransportFactory() {
 		return transportFactory;
 	}
 
 	/**
 	 * @param transportFactory the transportFactory to set
 	 */
-	protected void setTransportFactory(TransportFactory<? extends Request, ? extends Response> transportFactory) {
+	public void setTransportFactory(TransportFactory<REQ, RES> transportFactory) {
 		this.transportFactory = transportFactory;
 	}
 
@@ -161,7 +161,7 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 	/* (non-Javadoc)
 	 * @see net.oauth.client.OAuthRequest#execute(net.oauth.client.ResponseHandler)
 	 */
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T execute(ResponseHandler<T> responseHandler) throws OAuthRequestException, OAuthResponseException {
 		// TODO Auto-generated method stub
@@ -173,12 +173,12 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 			throw new IllegalArgumentException("Response handler may not be null.");
 		}
 		
-		Transport<Request, Response> transport = null;
+		Transport<REQ, RES> transport = null;
 		try {
 			if (transportId != null && !transportId.isEmpty()) {
-				transport = (Transport<Request, Response>) transportFactory.createTransport(transportId);
+				transport = transportFactory.createTransport(transportId);
 			} else {
-				transport = (Transport<Request, Response>) transportFactory.createTransport();
+				transport = transportFactory.createTransport();
 			}
 			
 			if (transport == null) {
@@ -186,7 +186,7 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 			}
 			
 			//Getting request
-			Request request = transportFactory.createRequest(requestMethod, requestUrl);
+			REQ request = transportFactory.createRequest(requestMethod, requestUrl);
 			
 			//Authenticate
 			authenticateRequest(request);
@@ -197,7 +197,7 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 					logger.info("Sending request (of type " + request.getClass().getName() + ") to " + interceptors.size() + " interceptor(s).");
 				}
 				
-				for (Interceptor<Request> interceptor : interceptors) {
+				for (Interceptor<REQ> interceptor : interceptors) {
 					interceptor.accept(request);
 				}
 			}
@@ -231,5 +231,5 @@ public abstract class AbstractOAuthRequest implements OAuthRequest, InterceptorC
 		}
 	}
 	
-	protected abstract void authenticateRequest(Request request) throws OAuthRequestException, AuthorizationException;
+	protected abstract void authenticateRequest(REQ request) throws OAuthRequestException, AuthorizationException;
 }

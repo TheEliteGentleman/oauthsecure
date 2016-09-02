@@ -19,7 +19,7 @@ import za.co.sindi.oauth.client.endpoints.FacebookEndpoints;
 import za.co.sindi.oauth.client.exception.OAuthRequestException;
 import za.co.sindi.oauth.client.exception.OAuthResponseException;
 import za.co.sindi.oauth.client.request.oauth2.AuthorizationGrant;
-import za.co.sindi.oauth.client.request.oauth2.OAuth2AccesTokenRequest;
+import za.co.sindi.oauth.client.request.oauth2.http.OAuth2AccesTokenRequest;
 import za.co.sindi.oauth.client.transport.factory.HttpTransportFactory;
 
 /**
@@ -29,8 +29,8 @@ import za.co.sindi.oauth.client.transport.factory.HttpTransportFactory;
  */
 public class FacebookOAuthTest {
 
-	private static final String API_KEY = "381571044440";
-	private static final String API_SECRET = "460f1f0ca32bbf32458a8b8dec6a216e";
+	private static final String API_KEY = "KEY";
+	private static final String API_SECRET = "SECRET";
 	
 	@Test
 	public void testFacebook() {
@@ -45,7 +45,7 @@ public class FacebookOAuthTest {
 			
 			OAuth2ClientCredentials clientCredentials = new OAuth2ClientCredentials(API_KEY, API_SECRET);
 			OAuth2AccesTokenRequest accessTokenRequest = client.getAccessTokenRequest();
-			accessTokenRequest.setAuthorizationGrant(AuthorizationGrant.password("buhake@hotmail.com", "phox0t1c")).setClientCredentials(clientCredentials);
+			accessTokenRequest.setAuthorizationGrant(AuthorizationGrant.password("USERNAME", "PASSWORD")).setClientCredentials(clientCredentials);
 			accessTokenRequest.setTransportFactory(new HttpTransportFactory());
 			AccessToken accessToken = accessTokenRequest.execute();
 			Assert.assertNotNull(accessToken);

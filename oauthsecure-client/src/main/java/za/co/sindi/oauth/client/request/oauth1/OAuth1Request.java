@@ -11,10 +11,9 @@ import za.co.sindi.oauth.client.NonceGenerator;
 import za.co.sindi.oauth.client.ResponseHandler;
 import za.co.sindi.oauth.client.credentials.oauth1.OAuth1ClientCredentials;
 import za.co.sindi.oauth.client.exception.OAuthRequestException;
-import za.co.sindi.oauth.client.request.AbstractOAuthRequest;
+import za.co.sindi.oauth.client.request.AbstractHttpOAuthRequest;
 import za.co.sindi.oauth.client.request.oauth1.enums.OAuthSignature;
 import za.co.sindi.oauth.client.request.oauth1.enums.RequestType;
-import za.co.sindi.oauth.client.transport.Request;
 import za.co.sindi.oauth.client.transport.exception.AuthorizationException;
 import za.co.sindi.oauth.client.transport.factory.HttpTransportFactory;
 import za.co.sindi.oauth.client.transport.http.EntityBasedHttpRequest;
@@ -29,7 +28,7 @@ import za.co.sindi.oauth.client.transport.http.entity.HttpParameterEntity;
  * @since 08 February 2012
  *
  */
-public class OAuth1Request extends AbstractOAuthRequest {
+public class OAuth1Request extends AbstractHttpOAuthRequest {
 	
 	//Needed oauth parameters
 	private OAuth1AuthorizationBuilder oauthAuthBuilder;
@@ -150,11 +149,23 @@ public class OAuth1Request extends AbstractOAuthRequest {
 		return this;
 	}
 
-	/**
-	 * @param additionalParameters the additionalParameters to set
-	 */
-	public OAuth1Request setAdditionalParameters(HttpParameters additionalParameters) {
-		this.additionalParameters = additionalParameters;
+//	/**
+//	 * @param additionalParameters the additionalParameters to set
+//	 */
+//	public OAuth1Request setAdditionalParameters(HttpParameters additionalParameters) {
+//		this.additionalParameters = additionalParameters;
+//		return this;
+//	}
+	
+	public OAuth1Request addAdditionalParameter(final String name, final String value) {
+		if (name != null && !name.isEmpty()) {
+			if (additionalParameters == null) {
+				additionalParameters = new HttpParameters();
+			}
+			
+			additionalParameters.setParameter(name, value);
+		}
+		
 		return this;
 	}
 
@@ -170,11 +181,11 @@ public class OAuth1Request extends AbstractOAuthRequest {
 	 * @see net.oauth.client.request.AbstractOAuthRequest#authenticateRequest(net.oauth.transport.Request)
 	 */
 	@Override
-	protected void authenticateRequest(Request request) throws OAuthRequestException, AuthorizationException {
+	protected void authenticateRequest(HttpRequest request) throws OAuthRequestException, AuthorizationException {
 		// TODO Auto-generated method stub
-		if (!(request instanceof HttpRequest)) {
-			throw new IllegalArgumentException("Request is not instance of " + HttpRequest.class.getName());
-		}
+//		if (!(request instanceof HttpRequest)) {
+//			throw new IllegalArgumentException("Request is not instance of " + HttpRequest.class.getName());
+//		}
 		
 		if (additionalParameters != null && !additionalParameters.isEmpty()) {
 			oauthAuthBuilder.setAdditionalParameters(additionalParameters.toMap());
@@ -190,7 +201,7 @@ public class OAuth1Request extends AbstractOAuthRequest {
 			}
 			
 			//Authenticate
-			oauthAuthBuilder.build().authenticate((HttpRequest) request);
+			oauthAuthBuilder.build().authenticate(/*(HttpRequest)*/request);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			throw new OAuthRequestException(e);

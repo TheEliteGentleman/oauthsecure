@@ -51,26 +51,24 @@ public final class AuthorizationGrant {
 	 * @param clientId the clientId to set
 	 */
 	public AuthorizationGrant setClientId(String clientId) {
-		OAuth2Parameters _parameters = new OAuth2Parameters();
 		if (clientId == null) {
-			_parameters.remove(OAuth2Constants.CLIENT_ID);
+			parameters.remove(OAuth2Constants.CLIENT_ID);
 		} else {
-			_parameters.setClientId(clientId);
+			parameters.setClientId(clientId);
 		}
-		return new AuthorizationGrant(_parameters);
+		return this;
 	}
 
 	/**
 	 * @param clientSecret the clientSecret to set
 	 */
 	public AuthorizationGrant setClientSecret(String clientSecret) {
-		OAuth2Parameters _parameters = new OAuth2Parameters();
 		if (clientSecret == null) {
-			_parameters.remove(OAuth2Constants.CLIENT_SECRET);
+			parameters.remove(OAuth2Constants.CLIENT_SECRET);
 		} else {
-			_parameters.setClientSecret(clientSecret);
+			parameters.setClientSecret(clientSecret);
 		}
-		return new AuthorizationGrant(_parameters);
+		return this;
 	}
 
 	public static AuthorizationGrant authorizationCode(String code) {

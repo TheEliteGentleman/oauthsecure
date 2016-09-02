@@ -8,9 +8,6 @@ import java.io.UnsupportedEncodingException;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
-import org.apache.log4j.Level;
-
 import za.co.sindi.oauth.client.exception.OAuth2ErrorResponseException;
 import za.co.sindi.oauth.client.exception.OAuthResponseException;
 import za.co.sindi.oauth.client.parameters.oauth2.OAuth2ErrorParameters;
@@ -40,33 +37,43 @@ public abstract class OAuth2ResponseHandler<T> extends AbstractResponseHandler<T
 	@Override
 	protected T handleHttpResponse(HttpResponse response) throws OAuthResponseException {
 		// TODO Auto-generated method stub
-		verifyResponseHeader(response, HttpConstants.HEADER_CACHE_CONTROL, CACHE_NO_STORE);
-		verifyResponseHeader(response, HttpConstants.HEADER_PRAGMA, PRAGMA_NO_CACHE);
-		
-		String contentType = ResponseUtils.getContentType(response);
-		if (!CONTENT_TYPE_JSON.equals(contentType)) {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn("Content-Type=" + contentType + " (which isn't of type of " + CONTENT_TYPE_JSON + "). Attempting to use JSON anyway.");
-			}
-		}
-		
 		try {
+			int statusCode = response.getStatusCode();
 			String entityBody = IOUtils.toString(response.getResponseStream(), ResponseUtils.getCharset(response));
-			JSONObject json = (JSONObject) JSONSerializer.toJSON(entityBody);
-			if (response.getStatusCode() >= 400) {
-				OAuth2ErrorParameters errorParameters = new OAuth2ErrorParameters(OAuth2Error.of(json.getString(OAuth2Constants.ERROR)));
-				if (json.containsKey(OAuth2Constants.ERROR_DESCRIPTION))
-					errorParameters.setErrorDescription(json.getString(OAuth2Constants.ERROR_DESCRIPTION));
-				if (json.containsKey(OAuth2Constants.ERROR_URI))
-					errorParameters.setErrorUri(json.getString(OAuth2Constants.ERROR_URI));
-				if (json.containsKey(OAuth2Constants.STATE))
-					errorParameters.setState(json.getString(OAuth2Constants.STATE));
-				
-				throw new OAuth2ErrorResponseException(response.getStatusCode(), errorParameters);
-//				throw new OAuthResponseException("OAuth 2 Error: " + LINE_SEPARATOR + entityBody);
+			String contentType = ResponseUtils.getContentType(response);
+			if (statusCode >= HttpConstants.SC_BAD_REQUEST) {
+				if (!CONTENT_TYPE_JSON.equals(contentType)) {
+//					if (logger.isEnabledFor(Level.WARN)) {
+//						logger.warn("Content-Type=" + contentType + " (which isn't of type of " + CONTENT_TYPE_JSON + ").");
+//					}
+					
+					throw new OAuthResponseException("OAuth 2 Error (HTTP status " + statusCode + "): " + LINE_SEPARATOR + entityBody);
+				} else {
+					JSONObject json = (JSONObject) JSONSerializer.toJSON(entityBody);
+					if (response.getStatusCode() >= 400) {
+						OAuth2ErrorParameters errorParameters = new OAuth2ErrorParameters(OAuth2Error.of(json.getString(OAuth2Constants.ERROR)));
+						if (json.containsKey(OAuth2Constants.ERROR_DESCRIPTION))
+							errorParameters.setErrorDescription(json.getString(OAuth2Constants.ERROR_DESCRIPTION));
+						if (json.containsKey(OAuth2Constants.ERROR_URI))
+							errorParameters.setErrorUri(json.getString(OAuth2Constants.ERROR_URI));
+						if (json.containsKey(OAuth2Constants.STATE))
+							errorParameters.setState(json.getString(OAuth2Constants.STATE));
+						
+						throw new OAuth2ErrorResponseException(response.getStatusCode(), errorParameters);
+//						throw new OAuthResponseException("OAuth 2 Error: " + LINE_SEPARATOR + entityBody);
+					}
+				}
 			}
 			
-			return handleOAuthResponse(json);
+			if (statusCode == HttpConstants.SC_OK) {
+				verifyResponseHeader(response, HttpConstants.HEADER_CACHE_CONTROL, CACHE_NO_STORE);
+				verifyResponseHeader(response, HttpConstants.HEADER_PRAGMA, PRAGMA_NO_CACHE);
+				
+				JSONObject json = (JSONObject) JSONSerializer.toJSON(entityBody);
+				return handleOAuthResponse(json);
+			}
+			
+			throw new OAuthResponseException("Unable to handle HTTP response (HTTP status " + statusCode + "): " + LINE_SEPARATOR + entityBody);
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			throw new OAuthResponseException(e);

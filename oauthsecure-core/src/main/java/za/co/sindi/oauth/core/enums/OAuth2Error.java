@@ -32,14 +32,14 @@ public enum OAuth2Error {
 		this.error = error;
 	}
 	
-	public static OAuth2Error of(String error) {
+	public static OAuth2Error of(final String error) {
 		for (OAuth2Error oauth2Error : values()) {
 			if (oauth2Error.error.equals(error)) {
 				return oauth2Error;
 			}
 		}
 		
-		return null;
+		throw new IllegalArgumentException("Invalid OAuth 2 error value '" + error + "'.");
 	}
 
 	/* (non-Javadoc)
