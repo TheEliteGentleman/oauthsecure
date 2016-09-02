@@ -141,9 +141,9 @@ public final class AuthorizationGrant {
 		
 		OAuth2Parameters parameters = new OAuth2Parameters();
 		parameters.setGrantType(REFRESH_TOKEN);
-		parameters.setUserName(refreshToken);
+		parameters.setRefreshToken(refreshToken);
 		if (scope != null && !scope.isEmpty()) {
-			parameters.setPassword(scope);
+			parameters.setScope(scope);
 		}
 		
 		return new AuthorizationGrant(parameters);
