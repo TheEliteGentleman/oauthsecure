@@ -31,8 +31,8 @@ import za.co.sindi.oauth.core.utils.OAuth1Constants;
  */
 public class LinkedInOAuthTest {
 
-	private static final String API_KEY = "I9DvH3zT4c-sjmrQTmo_AeJOfi8v8n1ChYHYAV8A3siVLyu1qLZqPq_HiGecD0bp";
-	private static final String API_SECRET  = "YhSX7rfm5fBkfJl4QTfbgNGMkLgDjljvXx0dwKL4GcYXpNXn0SHpiRKcolO_XEHz";
+	private static final String API_KEY = "KEY";
+	private static final String API_SECRET  = "SECRET";
 	private static final String OAUTH_CALLBACK = OAuth1Constants.OOB;
 	
 	@Test
