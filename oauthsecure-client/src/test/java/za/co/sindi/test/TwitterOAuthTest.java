@@ -34,7 +34,7 @@ public class TwitterOAuthTest {
 	public void testTwitterOAuth() {
 		try {
 			OAuth1Endpoints endpoints = new TwitterEndpoints();
-			OAuth1ClientCredentials credentials = new OAuth1ClientCredentials("e0ddoJdGMLfPj3DSLODA", "3CUTY50IcHYp1c0VV9zTGwv1DsnRL1GdXntsXtyRM");
+			OAuth1ClientCredentials credentials = new OAuth1ClientCredentials("KEY", "SECRET");
 			OAuth1Client client = new OAuth1Client(endpoints);
 			OAuth1Request requestTokenRequest = client.getRequestTokenRequest()
 					.setClientCredentials(credentials)
